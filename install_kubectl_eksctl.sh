@@ -1,20 +1,23 @@
-#instalacion de recursos requeridos + kubectl
+#Actualizacion de paquetes
+apt update -y 
 
-sudo apt-get install -y apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-sudo apt-get install -y kubectl
+#Descarga de kubectl e instalacion 
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+kubectl version --client --output=yaml
 
-#revisar version de kubectl
+#Configurcaion de kubectl
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-kubectl version --client
+#verificacion de la version de kubectl
+kubectl version --client --output=yaml
 
-#instalacion de eksctl 
+#Instalacion eksctl e instalacion
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
 
-sudo wget -O /usr/local/bin/eksctl "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz"
-sudo chmod +x /usr/local/bin/eksctl
-
-#revisar version de eksctl
-
+#verficicacion de la version de eksctl
 eksctl version
